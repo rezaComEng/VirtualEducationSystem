@@ -1,6 +1,8 @@
 package org.example;
 
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Person {
 
@@ -118,4 +120,45 @@ public class Person {
         return password;
     }
 
+    public void setPhoneNumber(String phoneNumber) {
+        if(phoneNumber.length() == 11 && phoneNumber.startsWith("09"))
+            this.phoneNumber = phoneNumber;
+        else
+            System.out.println("Invalid phonenumber");
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        if(isEmailValid(email))
+            this.email = email;
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
+
+    public String getRepeatedPassword() {
+        return repeatedPassword;
+    }
+
+    public void setRepeatedPassword(String repeatedPassword) {
+        this.repeatedPassword = repeatedPassword;
+    }
+    public static boolean isEmailValid(String email) {
+        final String regexEmail = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA_Z0-9_+&*-]+)*@(?:[a-zA-Z-]+\\.)+[a-zA-Z]{2,7}$";
+        Pattern pattern = Pattern.compile(regexEmail);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
 }
