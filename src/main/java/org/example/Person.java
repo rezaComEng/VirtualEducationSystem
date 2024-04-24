@@ -6,133 +6,183 @@ import java.util.regex.Pattern;
 
 public class Person {
 
+    public UserPage userPage ;
     public static Person[] Users = new Person[100] ;
     public static int UserLength ;
     private String firstname;
     private String lastname;
     private String username;
     private String fieldOfStudy;
-    private int educationalID;
     private String email;
     private String phoneNumber;
     private String position;
     private String password;
     private String repeatedPassword;
+    private UserRole userRole ;
 
-    public void Ask(){
-        System.out.println("Do you have an account(login) or you want to sign up?");
+    private int educationalID ;
+
+    public Person() {
+        makePerson();
+    }
+
+    public void makePerson () {
         Scanner input = new Scanner(System.in);
-        String answer = input.next();
-        if(answer.equals("login")){
-            System.out.println("Insert your Eductional ID");
-            int ID = input.nextInt() ;
-//            if(isIDvalid(ID)){
-//
-//            }
-
+        System.out.println("enter your firstname :");
+        String firstname ;
+        String lastname ;
+        String username ;
+        String filedOfStudy ;
+        String email ;
+        String phoneNumber ;
+        String password ;
+        String repeatedPassword ;
+        while (true) {
+            firstname = input.next();
+            if ( isWordValid(firstname) ) {
+                this.firstname = firstname ;
+                break;
+            }
+            else System.out.println("The firstname entered is invalid, try again");
+        }
+        System.out.println("enter your lastname :");
+        while (true) {
+            lastname = input.next();
+            if ( isWordValid(lastname) ) {
+                this.lastname= lastname ;
+                break;
+            }
+            else System.out.println("The lastname entered is invalid, try again");
+        }
+        System.out.println("enter your username :");
+        while (true) {
+            username = input.next();
+            if ( isUserValid(username) ) {
+                this.username = username ;
+                break;
+            }
+            else System.out.println("The username entered is invalid, try again");
+        }
+        System.out.println("enter your field of study :");
+        while (true) {
+            filedOfStudy = input.next();
+            if ( isWordValid(filedOfStudy) ) {
+                this.fieldOfStudy = filedOfStudy ;
+                break;
+            }
+            else System.out.println("The filedOfStudy entered is invalid, try again");
+        }
+        System.out.println("enter your email :");
+        while (true) {
+            email = input.next();
+            if ( isEmailValid(email) ) {
+                this.email = email ;
+                break;
+            }
+            else System.out.println("The email entered is invalid, try again");
+        }
+        System.out.println("enter your phone number :");
+        while (true) {
+            phoneNumber = input.next();
+            if ( isPhoneValid(phoneNumber) ) {
+                this.phoneNumber = phoneNumber ;
+                break;
+            }
+            else System.out.println("The phone number entered is invalid, try again");
+        }
+        System.out.println("enter your password :");
+        while (true) {
+            password = input.next();
+            if ( isPassValid(password) ) {
+                this.password= password ;
+                break;
+            }
+            else System.out.println("The password entered is invalid, try again");
+        }
+        System.out.println("repeat your password :");
+        while (true) {
+            repeatedPassword = input.next();
+            if ( password.equals(repeatedPassword) ) {
+                this.repeatedPassword = repeatedPassword ;
+                break;
+            }
+            else System.out.println("The repeated password is not the same, try again");
         }
     }
 
-    private boolean checkIsWord (char word) {
-        if ( (word >= 'a' && word<='z') || (word >= 'A' && word<='Z') )
-            return true ;
-        else return false ;
+    public static boolean isWordValid (String word) {
+        Pattern pattern = Pattern.compile("^[a-zA-Z]{1,18}$");
+        Matcher matcher = pattern.matcher(word);
+        return matcher.find() ;
     }
 
     public void setFirstName(String firstname){
-        int i;
-        for(i = 0; firstname.length() < 19 && i < firstname.length() ;i ++){
-            if( !checkIsWord( firstname.charAt(i) ) )
-                break;
-        }
-        if(i == firstname.length())
+        if( isWordValid(firstname) )
             this.firstname = firstname;
-        else 
+        else
             System.out.println("Invalid firstname");
-    }
-    public String getFirstName(){
-        return firstname;
     }
 
     public void setLastName(String lastname){
-        int i;
-        for(i = 0;lastname.length() < 19 && i < lastname.length();i ++){
-            if(!checkIsWord( lastname.charAt(i) )){
-                break;
-            }
-        }
-        if(i == lastname.length())
+        if( isWordValid( lastname) )
             this.lastname = lastname;
-        else 
+        else
             System.out.println("Invalid lastname");
 
     }
-    public String getLastname(){
-        return firstname;
-    }
 
     public void setFieldOfStudy(String fieldOfStudy){
-        int i;
-        for(i = 0;fieldOfStudy.length() < 19 && i < fieldOfStudy.length();i ++){
-            if( !checkIsWord( fieldOfStudy.charAt(i) ) ){
-                break;
-            }
-        }
-        if(i == fieldOfStudy.length())
+        if(isWordValid( fieldOfStudy ))
             this.fieldOfStudy = fieldOfStudy;
         else
             System.out.println("Invalid fieldOfStudy");
 
     }
-    public String getFieldOfStudy(){
-        return fieldOfStudy;
-    }
 
-    public void setUsername(String username) {
-        int i;
-        for(i = 0;username.length() > 4 && username.length() < 13 && i < username.length();i ++){
-            if( !checkIsWord( username.charAt(i) ) || (username.charAt(i) >= '0' && username.charAt(i) <= '9') ){
-                break;
-            }
-        }
-        if(i == username.length())
-            this.username = username;
-        else 
-            System.out.println("Invalid username");
-    }
-    public String getUsername(){
-        return username;
+    public static boolean isPassValid (String word) {
+        Pattern pattern = Pattern.compile("^[a-zA-Z0-9]{8,12}$");
+        Matcher matcher = pattern.matcher(word);
+        return matcher.find() ;
     }
 
     public void setPassword(String password) {
-        int i;
-        for(i = 0; password.length() > 7 && password.length() < 13 && i < password.length() ;i ++){
-            if( !checkIsWord( password.charAt(i) ) || (password.charAt(i) >= '0' && password.charAt(i) <= '9')){
-                break;
-            }
-        }
-        if(i == password.length())
+        if( isPassValid( password ) )
             this.password = password;
-        else 
+        else
             System.out.println("Invalid password");
     }
-    public String getPassword(){
-        return password;
+
+    public static boolean isUserValid (String word) {
+        Pattern pattern = Pattern.compile("^[a-zA-Z0-9]{5,12}$");
+        Matcher matcher = pattern.matcher(word);
+        return matcher.find() ;
+    }
+
+    public void setUsername(String username) {
+        if( isUserValid( username ) )
+            this.username = username;
+        else
+            System.out.println("Invalid username");
+    }
+
+    public static boolean isPhoneValid (String phone) {
+        Pattern pattern = Pattern.compile("[0-9]{11}");
+        Matcher matcher = pattern.matcher(phone) ;
+        return matcher.find();
     }
 
     public void setPhoneNumber(String phoneNumber) {
-        if(phoneNumber.length() == 11 && phoneNumber.startsWith("09"))
+        if( isPhoneValid(phoneNumber) )
             this.phoneNumber = phoneNumber;
         else
             System.out.println("Invalid phonenumber");
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public String getEmail() {
-        return email;
+    public static boolean isEmailValid(String email) {
+        final String regexEmail = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z-]+\\.)+.[a-zA-Z]{2,7}$";
+        Pattern pattern = Pattern.compile(regexEmail);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
     }
 
     public void setEmail(String email) {
@@ -140,25 +190,55 @@ public class Person {
             this.email = email;
     }
 
-    public String getPosition() {
-        return position;
-    }
-
     public void setPosition(String position) {
         this.position = position;
-    }
-
-    public String getRepeatedPassword() {
-        return repeatedPassword;
     }
 
     public void setRepeatedPassword(String repeatedPassword) {
         this.repeatedPassword = repeatedPassword;
     }
-    public static boolean isEmailValid(String email) {
-        final String regexEmail = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA_Z0-9_+&*-]+)*@(?:[a-zA-Z-]+\\.)+[a-zA-Z]{2,7}$";
-        Pattern pattern = Pattern.compile(regexEmail);
-        Matcher matcher = pattern.matcher(email);
-        return matcher.matches();
+
+    public void setEducationalID(int educationalID) {
+        this.educationalID = educationalID;
+    }
+
+    public void setUserRole(UserRole userRole) {
+        this.userRole = userRole;
+    }
+
+    public UserRole getUserRole() {
+        return userRole;
+    }
+
+    public String getFirstName(){
+        return firstname;
+    }
+    public String getLastname(){
+        return firstname;
+    }
+    public String getFieldOfStudy(){
+        return fieldOfStudy;
+    }
+    public String getUsername(){
+        return username;
+    }
+    public String getPassword(){
+        return password;
+    }
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+    public String getEmail() {
+        return email;
+    }
+    public String getPosition() {
+        return position;
+    }
+    public String getRepeatedPassword() {
+        return repeatedPassword;
+    }
+
+    public int getEducationalID() {
+        return educationalID;
     }
 }
