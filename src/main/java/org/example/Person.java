@@ -166,7 +166,7 @@ public class Person {
     }
 
     public static boolean isPhoneValid (String phone) {
-        Pattern pattern = Pattern.compile("[0-9]{11}");
+        Pattern pattern = Pattern.compile("09[0-9]{9}");
         Matcher matcher = pattern.matcher(phone) ;
         return matcher.find();
     }
@@ -175,7 +175,7 @@ public class Person {
         if( isPhoneValid(phoneNumber) )
             this.phoneNumber = phoneNumber;
         else
-            System.out.println("Invalid phonenumber");
+            System.out.println("Invalid phoneNumber");
     }
 
     public static boolean isEmailValid(String email) {
