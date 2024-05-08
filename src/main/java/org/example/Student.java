@@ -22,6 +22,17 @@ public class Student extends Person {
         this.studentID = studentID;
     }
 
+    public void setStudentID(int studentID) {
+        Pattern pattern = Pattern.compile("^[0-9]{10}$");
+        Matcher matcher = pattern.matcher(String.valueOf(studentID));
+
+        if (matcher.find())
+            this.studentID=studentID;
+        else
+            throw new InvalidIDException();
+    }
+
+
     public void makeStudent () {
         Scanner input = new Scanner(System.in);
         System.out.println("enter your educationalID :");
