@@ -1,12 +1,22 @@
 package org.example;
 
+import java.lang.reflect.Array;
 import java.util.Scanner;
 
 public class Teacher extends Person{
 
 
-    public Teacher () {
-        super();
+    public Teacher(String email, String password, String repeatedPassword, UserRole userRole) {
+        super(email, password, repeatedPassword, userRole);
+        makeTeacher();
+    }
+
+    public Teacher(String username, String password, UserRole userRole) {
+        super(username, password, userRole);
+        makeTeacher();
+    }
+
+    public Teacher() {
         makeTeacher();
     }
 

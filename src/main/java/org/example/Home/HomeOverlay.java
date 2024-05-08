@@ -4,6 +4,7 @@ import com.formdev.flatlaf.FlatClientProperties;
 import net.miginfocom.layout.AC;
 import net.miginfocom.swing.MigLayout;
 import org.example.Login;
+import org.example.Main;
 import org.example.SignUp;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
@@ -14,11 +15,17 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DateFormat;
+import java.util.Date;
 
 public class HomeOverlay extends JPanel {
 
-    private MediaPlayerFactory playerFactory ;
-    private EmbeddedMediaPlayer player ;
+    public SignUp signupPanel = new SignUp();
+
+    public HomePanel homePanel = new HomePanel();
+    public MediaPlayerFactory playerFactory ;
+    public EmbeddedMediaPlayer player ;
+    public WindowOverlay windowOverlay ;
     public HomeOverlay () {
         init ();
     }
@@ -46,9 +53,11 @@ public class HomeOverlay extends JPanel {
         add(canvas);
     }
 
-    public void initOverlay(JFrame frame) {
+    public void initOverlay() {
 
-        player.overlay().set(new WindowOverlay(frame));
+        windowOverlay = new WindowOverlay();
+
+        player.overlay().set(windowOverlay);
 
         player.overlay().enable(true);
     }
@@ -69,8 +78,8 @@ public class HomeOverlay extends JPanel {
 
     private class WindowOverlay extends JWindow {
 
-        public WindowOverlay (JFrame frame) {
-            super(frame);
+        public WindowOverlay () {
+            super(Main.mainFrame);
             init () ;
         }
 
@@ -78,74 +87,138 @@ public class HomeOverlay extends JPanel {
             setBackground(new Color(192, 24, 24,50));
             setLayout(new BorderLayout());
 
-            add(new Panel());
+            add(homePanel);
         }
     }
-    private class Panel extends JPanel {
+    public class HomePanel extends JPanel {
 
         private Login loginPanel = new Login();
 
-        public Panel (){
+        public Login getLoginPanel() {
+            return loginPanel;
+        }
+
+        private JPanel header = header();
+
+        public JPanel getHeader() {
+            return header;
+        }
+
+        private JPanel description = description();
+
+        public JPanel getDescription() {
+            return description;
+        }
+
+        public HomePanel (){
             init();
         }
 
         private void init () {
             setOpaque(false);
             setLayout(new MigLayout("fill,insets 10 100 10 100","fill","[grow 0][]"));
-            header();
-            description();
+            addHomePage();
         }
 
-        private void header () {
+        public void addHomePage () {
+            removeAll();
+            add(header,"wrap,span 2 1");
+            add(description,"width 50%!");
+            repaint();
+        }
+
+        public void addLoginPage () {
+            removeAll();
+            add(header,"wrap,span 2 1");
+            add(description,"width 50%!");
+            add(loginPanel,"cell 1 1");
+            repaint();
+        }
+
+        public void addSignupPage () {
+            removeAll();
+            add(header,"wrap,span 2 1");
+            add(description,"width 50%!");
+            add(signupPanel,"cell 1 1");
+            repaint();
+        }
+
+        private JPanel header () {
             JPanel header = new JPanel();
-            header.setLayout( new MigLayout("fill","[]push[][]"));
+            header.setLayout( new MigLayout("fill","[][]push[][]"));
             header.setOpaque(false);
 
             JLabel title = new JLabel("virtual education system");
             title.putClientProperty(FlatClientProperties.STYLE,"" +
                     "font:bold +15");
 
-            JButton login = new JButton("Login");
-            JButton signUp = new JButton("SignUp");
-            JButton home = new JButton("Home");
-            JButton back = new JButton("Back");
-            login.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            login.setBackground(new Color(0x57C594));
-            login.setForeground(new Color(1));
-            signUp.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            signUp.setBackground(new Color(0x57C594));
-            signUp.setForeground(new Color(1));
-            home.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            home.setBackground(new Color(0x57C594));
-            home.setForeground(new Color(1));
-            back.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            back.setBackground(new Color(0x57C594));
-            back.setForeground(new Color(1));
+            JButton loginBtn = new JButton("Login");
+            JButton signUpBtn = new JButton("SignUp");
+            JButton homeBtn = new JButton("Home");
+            JButton backBtn = new JButton("Back");
+            loginBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            loginBtn.setBackground(new Color(0x57C594));
+            loginBtn.setForeground(new Color(1));
+            signUpBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            signUpBtn.setBackground(new Color(0x57C594));
+            signUpBtn.setForeground(new Color(1));
+            homeBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            homeBtn.setBackground(new Color(0x57C594));
+            homeBtn.setForeground(new Color(1));
+            backBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            backBtn.setBackground(new Color(0x57C594));
+            backBtn.setForeground(new Color(1));
 
-            header.add(title,"push");
+            header.add(title);
+            header.add(new ClockPane(),"push");
 
-            header.add(login);
-            header.add(signUp);
-            header.add(home);
-            header.add(back);
+            header.add(loginBtn);
+            header.add(signUpBtn);
+            header.add(homeBtn);
+            header.add(backBtn);
 
-            signUp.addActionListener(new ActionListener() {
+            homeBtn.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    new SignUp();
+                    homePanel.addHomePage();
                 }
             });
-            login.addActionListener(new ActionListener() {
+
+            signUpBtn.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    add(loginPanel);
-                    revalidate();
+                    boolean sw = false ;
+                    for (Component component : homePanel.getComponents())
+                        if (component.equals(signupPanel) ){
+                            addHomePage();
+                            sw = true;
+                        }
+                    if (!sw)
+                        addSignupPage();
+                    homePanel.revalidate();
+                    homePanel.repaint();
                 }
             });
-            add(header,"wrap,span 2 1");
+            loginBtn.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    boolean sw = false ;
+                    for (Component component : homePanel.getComponents())
+                        if ( component.equals(loginPanel) ){
+                            addHomePage();
+                            sw = true;
+                        }
+                    if (!sw)
+                        addLoginPage();
+                    homePanel.revalidate();
+                    homePanel.repaint();
+                }
+            });
+
+            return header;
         }
 
-        private void description  () {
+        private JPanel description  () {
             JPanel panel = new JPanel();
             panel.setOpaque(false);
 
@@ -165,7 +238,36 @@ public class HomeOverlay extends JPanel {
                     "\nstudents to connect with instructors and peers.");
 
             panel.add(description);
-            add(panel,"width 50%!");
+            return panel ;
+        }
+
+        public class ClockPane extends JPanel {
+
+            private JLabel clock;
+
+            public ClockPane() {
+                setOpaque(false);
+                setLayout(new BorderLayout());
+                clock = new JLabel();
+                clock.setHorizontalAlignment(JLabel.CENTER);
+                clock.setFont(UIManager.getFont("Label.font").deriveFont(Font.BOLD, 10f));
+                tickTock();
+                add(clock);
+
+                Timer timer = new Timer(500, new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        tickTock();
+                    }
+                });
+                timer.setRepeats(true);
+                timer.setCoalesce(true);
+                timer.setInitialDelay(0);
+                timer.start();
+            }
+            public void tickTock() {
+                clock.setText(DateFormat.getDateTimeInstance().format(new Date()));
+            }
         }
     }
 

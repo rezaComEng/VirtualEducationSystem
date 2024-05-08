@@ -5,8 +5,12 @@ public enum UserRole {
     TEACHER ("teacher"),
     MANAGER ("manager");
 
-    public String userMode ;
+    private String userMode ;
     UserRole(String userMode) {
         this.userMode =  userMode ;
+    }
+
+    public String getUserMode() {
+        return userMode;
     }
 }

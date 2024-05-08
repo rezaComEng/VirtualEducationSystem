@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 public class Person {
 
-    public UserPage userPage ;
+    public User user ;
     public static Person[] Users = new Person[100] ;
     public static int UserLength ;
     private String firstname;
@@ -19,6 +19,19 @@ public class Person {
     private String password;
     private String repeatedPassword;
     private UserRole userRole ;
+
+    public Person(String email, String password, String repeatedPassword, UserRole userRole) {
+        this.email = email;
+        this.password = password;
+        this.repeatedPassword = repeatedPassword;
+        this.userRole = userRole;
+    }
+
+    public Person(String username, String password, UserRole userRole) {
+        this.username = username;
+        this.password = password;
+        this.userRole = userRole;
+    }
 
     private int educationalID ;
 
@@ -179,7 +192,7 @@ public class Person {
     }
 
     public static boolean isEmailValid(String email) {
-        final String regexEmail = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z-]+\\.)+.[a-zA-Z]{2,7}$";
+        final String regexEmail = "^[a-zA-Z0-9.]+@(?:[a-zA-Z-]+\\.)+.[a-z]{1,4}$";
         Pattern pattern = Pattern.compile(regexEmail);
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();

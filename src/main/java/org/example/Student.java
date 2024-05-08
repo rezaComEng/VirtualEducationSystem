@@ -12,6 +12,16 @@ public class Student extends Person {
         makeStudent();
     }
 
+    public Student(String email, String password, String repeatedPassword, UserRole userRole, int studentID) {
+        super(email, password, repeatedPassword, userRole);
+        this.studentID = studentID;
+    }
+
+    public Student(String username, String password, UserRole userRole, int studentID) {
+        super(username, password, userRole);
+        this.studentID = studentID;
+    }
+
     public void makeStudent () {
         Scanner input = new Scanner(System.in);
         System.out.println("enter your educationalID :");
