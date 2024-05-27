@@ -12,7 +12,7 @@ import java.awt.event.ActionListener;
 public class UserFrame extends JFrame {
     private Person user ;
     RoundedPanel menuPanel = new RoundedPanel();
-    RoundedPanel panel2 = new RoundedPanel();
+    JScrollPane panel2 = new JScrollPane();
 
     RoundedPanel header = new RoundedPanel();
 
@@ -31,6 +31,7 @@ public class UserFrame extends JFrame {
         createHeader();
 
         createMenu();
+
 
         panel2.add(new JLabel());
         panel2.setBounds(menuPanel.getWidth() + menuPanel.getX() + 10 , menuPanel.getY() ,
@@ -58,6 +59,8 @@ public class UserFrame extends JFrame {
 
         JMenu educationalMenu = new JMenu("educational");
 
+        JButton addStudent = new JButton("addStudent");
+
         JButton exercises = new JButton("exercises");
         JButton exams = new JButton("exams (Quizzes)");
         JButton homeWorks = new JButton("home works");
@@ -77,14 +80,56 @@ public class UserFrame extends JFrame {
             }
         });
 
+        addStudent.addActionListener( e -> {
+            panel2.removeAll();
+            panel2.setBackground( new Color(152, 47, 47));
+
+            panel2.add ( new addStudent()) ;
+        });
+
 
         educationalMenu.add(exercises);
         educationalMenu.add(exams);
         educationalMenu.add(homeWorks);
 
         menuBar.add(educationalMenu);
+        menuBar.add(addStudent) ;
 
         menuPanel.add(menuBar,"alignx center");
+    }
+
+    private class addStudent extends JPanel {
+
+
+        public addStudent ( ) {
+            init();
+        }
+
+        private void init () {
+            setSize(panel2.getSize());
+            setLayout( new MigLayout("fillx , alignx center"));
+            JLabel nameLbl = new JLabel("name" );
+            nameLbl.setSize(30,100);
+            add ( nameLbl );
+            JTextField namefield = new JTextField();
+            namefield.setBackground( new Color(215, 191, 191));
+            namefield.setSize(30,100);
+            add( namefield , " wrap");
+
+            JLabel lastnameLbl = new JLabel("lastname" );
+            lastnameLbl.setSize(30,100);
+            add ( lastnameLbl );
+            JTextField lastnamefield = new JTextField();
+            lastnamefield.setSize(30,100);
+            add( lastnamefield , " wrap");
+
+            JLabel IDLbl = new JLabel("student Id" );
+            IDLbl.setSize(30,100);
+            add ( IDLbl );
+            JTextField IdField = new JTextField();
+            IDLbl.setSize(30,100);
+            add( IdField , " wrap");
+        }
     }
 
     private void createHeader () {

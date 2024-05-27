@@ -146,16 +146,29 @@ public class Login extends JPanel {
     JLabel warningError;
 
     private boolean loginCheck () {
-        ObjectInputStream users ;
+        ObjectInputStream userFile = null ;
         try {
-            users = new ObjectInputStream(new FileInputStream("user.bin"));
+            userFile = new ObjectInputStream(new FileInputStream("user.bin"));
+            Object user  = null ;
             while ( true ) {
-                Object user = users.readObject() ;
+                user = userFile.readObject() ;
                 if ( user == null ) break ;
+
+                if ( user instanceof Person ) {
+                    user = ( Person ) user ;
+                    Person.Users.add((Person) user);
+                }
+
 
             }
         } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException();
+        } finally {
+            try {
+                userFile.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
         boolean result1 =false;
         Person p = null ;
@@ -175,7 +188,6 @@ public class Login extends JPanel {
                     warningError.setText("inter your current Mode");
                 }
             } else {
-                System.out.println("2");
                 warningError.setText("password is wrong");
             }
         } else {

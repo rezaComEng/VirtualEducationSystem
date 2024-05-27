@@ -143,7 +143,14 @@ public final class SignUp extends JPanel {
                             user.writeObject(Person.Users.getLast());
 
                         }
-                        System.out.println(Person.Users.getLast().toString());
+                        EventQueue.invokeLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                new UserFrame(Person.Users.getLast()).setVisible(true);
+                            }
+                        });
+                        Main.mainFrame.setVisible(false);
+
                     }
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);

@@ -7,7 +7,7 @@ import org.example.userinfo.Teacher;
 import java.util.ArrayList;
 
 public class Lesson {
-    public ArrayList<Teacher> teachers ;
+    public Teacher teacher ;
     public ArrayList<Student> students ;
     public ArrayList<Exam> exams ;
     private String name ;
@@ -22,7 +22,6 @@ public class Lesson {
     }
 
     public Lesson(String name, LessonType lessonType, int unitsNumber) {
-        teachers = new ArrayList<Teacher>();
         students = new ArrayList<Student>();
         exams = new ArrayList<Exam>();
         this.name = name;
