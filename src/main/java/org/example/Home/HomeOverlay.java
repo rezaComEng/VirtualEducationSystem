@@ -3,6 +3,7 @@ package org.example.Home;
 import com.formdev.flatlaf.FlatClientProperties;
 import net.miginfocom.layout.AC;
 import net.miginfocom.swing.MigLayout;
+import org.example.ClockPane;
 import org.example.Login;
 import org.example.Main;
 import org.example.SignUp;
@@ -170,7 +171,8 @@ public class HomeOverlay extends JPanel {
             backBtn.setForeground(new Color(1));
 
             header.add(title);
-            header.add(new ClockPane(),"push");
+
+            header.add( new ClockPane() ,"push");
 
             header.add(loginBtn);
             header.add(signUpBtn);
@@ -241,34 +243,7 @@ public class HomeOverlay extends JPanel {
             return panel ;
         }
 
-        public class ClockPane extends JPanel {
 
-            private JLabel clock;
-
-            public ClockPane() {
-                setOpaque(false);
-                setLayout(new BorderLayout());
-                clock = new JLabel();
-                clock.setHorizontalAlignment(JLabel.CENTER);
-                clock.setFont(UIManager.getFont("Label.font").deriveFont(Font.BOLD, 10f));
-                tickTock();
-                add(clock);
-
-                Timer timer = new Timer(500, new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        tickTock();
-                    }
-                });
-                timer.setRepeats(true);
-                timer.setCoalesce(true);
-                timer.setInitialDelay(0);
-                timer.start();
-            }
-            public void tickTock() {
-                clock.setText(DateFormat.getDateTimeInstance().format(new Date()));
-            }
-        }
     }
 
 }

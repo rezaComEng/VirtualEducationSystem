@@ -5,5 +5,7 @@ public class InvalidIDException extends RuntimeException {
         super();
     }
 
-
+    public InvalidIDException(String message) {
+        super(message);
+    }
 }

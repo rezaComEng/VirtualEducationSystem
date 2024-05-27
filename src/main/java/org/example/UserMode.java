@@ -1,12 +1,12 @@
 package org.example;
 
-public enum UserRole {
+public enum UserMode {
     STUDENT ("student"),
     TEACHER ("teacher"),
     MANAGER ("manager");
 
     private String userMode ;
-    UserRole(String userMode) {
+    UserMode(String userMode) {
         this.userMode =  userMode ;
     }
 

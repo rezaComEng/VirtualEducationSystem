@@ -1,6 +1,8 @@
 package org.example;
 
-public class Notification {
+public class CourseMaterial {
+
     private String title ;
     private String text ;
+
 }

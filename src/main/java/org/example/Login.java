@@ -1,25 +1,21 @@
 package org.example;
 
 import com.formdev.flatlaf.FlatClientProperties;
-import com.formdev.flatlaf.ui.FlatBorder;
 import com.formdev.flatlaf.util.Animator;
 import com.formdev.flatlaf.util.UIScale;
-import com.github.weisj.jsvg.nodes.Use;
 import net.miginfocom.swing.MigLayout;
-import org.example.Home.HomeOverlay;
 import org.example.Home.MainFrame;
+import org.example.userinfo.Person;
+import org.example.userinfo.Student;
 
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Arrays;
+import java.io.ObjectInputStream;
 import java.util.Scanner;
 
 public class Login extends JPanel {
@@ -40,15 +36,25 @@ public class Login extends JPanel {
 
         cmdLogin = new JButton("Login");
 
-        userMode[0] = new JRadioButton("student");
-        userMode[1] = new JRadioButton("teacher");
-        userMode[2] = new JRadioButton("manager");
+        userModeBtns[0] = new JRadioButton("student");
+        userModeBtns[1] = new JRadioButton("teacher");
+        userModeBtns[2] = new JRadioButton("manager");
+
+        userModeBtns[0].addActionListener( e -> {
+            userMode = UserMode.STUDENT ;
+        });
+        userModeBtns[1].addActionListener( e -> {
+            userMode = UserMode.TEACHER ;
+        });
+        userModeBtns[2].addActionListener( e -> {
+            userMode = UserMode.MANAGER ;
+        });
 
         buttonGroup = new ButtonGroup();
 
-        buttonGroup.add(userMode[0]);
-        buttonGroup.add(userMode[1]);
-        buttonGroup.add(userMode[2]);
+        buttonGroup.add(userModeBtns[0]);
+        buttonGroup.add(userModeBtns[1]);
+        buttonGroup.add(userModeBtns[2]);
 
 
         putClientProperty(FlatClientProperties.STYLE,"" +
@@ -97,10 +103,13 @@ public class Login extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (loginCheck()) {
-                    MainFrame.homeOverlay.homePanel.remove(MainFrame.homeOverlay.homePanel.getLoginPanel());
-                    MainFrame.homeOverlay.homePanel.remove(MainFrame.homeOverlay.homePanel.getDescription());
-                    MainFrame.homeOverlay.homePanel.add(User.getUserPane());
-                    MainFrame.homeOverlay.homePanel.repaint();
+                    EventQueue.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            new UserFrame(Person.Users.getLast()).setVisible(true);
+                        }
+                    });
+                    Main.mainFrame.setVisible(false);
                 }
             }
         });
@@ -109,9 +118,9 @@ public class Login extends JPanel {
         userQuestion.setOpaque(false);
         userQuestion.setLayout( new MigLayout("wrap3"));
         userQuestion.add(new JLabel("chose youe mode"),"alignx center,wrap,span 3 1");
-        userQuestion.add(userMode[0]);
-        userQuestion.add(userMode[1]);
-        userQuestion.add(userMode[2]);
+        userQuestion.add(userModeBtns[0]);
+        userQuestion.add(userModeBtns[1]);
+        userQuestion.add(userModeBtns[2]);
 
         panel.add(lbTitle);
         panel.add(description);
@@ -137,24 +146,31 @@ public class Login extends JPanel {
     JLabel warningError;
 
     private boolean loginCheck () {
+        ObjectInputStream users ;
+        try {
+            users = new ObjectInputStream(new FileInputStream("user.bin"));
+            while ( true ) {
+                Object user = users.readObject() ;
+                if ( user == null ) break ;
+
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
         boolean result1 =false;
-        int i;
-        for ( i=0 ; i<Person.UserLength ; i++) {
-            if ( Person.Users[i].getUsername().equals( txtUsername.getText() ) ) {
+        Person p = null ;
+        for (Person person : Person.Users) {
+            if ( person.getUsername().equals( txtUsername.getText() ) ) {
+                p = person ;
                 result1 = true;
                 break;
             }
         }
         if (result1) {
-            if (String.valueOf(txtPassword.getPassword()).equals(Person.Users[i].getPassword())) {
-                if (buttonGroup.getSelection()!=null ){
-                    for (int j = 0; j < 3; j++) {
-                        if (userMode[j].isSelected())
-                            if (userMode[j].getText().equals(Person.Users[i].getUserRole().getUserMode())) {
-                                User.getUserPane().userPerson = Person.Users[i];
-                                return true;
-                            }
-                    }
+            if (String.valueOf(txtPassword.getPassword()).equals(p.getPassword())) {
+                if ( buttonGroup.getSelection() != null ){
+                    if ( userMode.getUserMode().equals(p.getUserMode().getUserMode()))
+                        return true ;
                 } else {
                     warningError.setText("inter your current Mode");
                 }
@@ -210,8 +226,8 @@ public class Login extends JPanel {
         super.paint(g);
     }
     ButtonGroup buttonGroup;
-
-    private JRadioButton[] userMode = new JRadioButton[3];
+    private JRadioButton[] userModeBtns = new JRadioButton[3];
+    private UserMode userMode ;
     private JTextField txtUsername ;
     private JPasswordField txtPassword;
     private JCheckBox chRememberMe ;
@@ -243,52 +259,52 @@ public class Login extends JPanel {
 //        }
 //    }
 
-    private void getInfo (UserRole userRole) {
-        int index = -1 ;
-        int ID;
-        Scanner input = new Scanner(System.in) ;
-        if (userRole.getUserMode().equals( UserRole.STUDENT.getUserMode() )) {
-            System.out.println("Enter your student ID");
-            while (true) {
-                ID = input.nextInt();
-                for (int i=0 ; i<Person.UserLength ; i++) {
-                    if (Person.Users[i] instanceof Student) {
-                        if (Person.Users[i].getEducationalID() == ID){
-                            index = i ;
-                            break;
-                        }
-                    }
-                }
-                if (index == -1) System.out.println("student ID not found, please search again");
-                else break;
-            }
-        }
-        else {
-            System.out.println("Enter your educational ID");
-
-            while (true) {
-                ID = input.nextInt();
-                for (int i=0 ; i<Person.UserLength ; i++) {
-                    if (!(Person.Users[i] instanceof Student)) {
-                        if (Person.Users[i].getEducationalID() == ID){
-                            index = i ;
-                            break;
-                        }
-                    }
-                }
-                if (index == -1) System.out.println("educational ID not found, please search again");
-                else break;
-            }
-        }
-        System.out.println("Enter your password ID");
-        String password ;
-        while (true) {
-            password = input.next();
-            if (password.equals(Person.Users[index].getPassword())) {
-//                Person.Users[index].userPage ;
-                break;
-            }
-            else System.out.println("password is wrong");
-        }
-    }
+//    private void getInfo (UserRole userRole) {
+//        int index = -1 ;
+//        int ID;
+//        Scanner input = new Scanner(System.in) ;
+//        if (userRole.getUserMode().equals( UserRole.STUDENT.getUserMode() )) {
+//            System.out.println("Enter your student ID");
+//            while (true) {
+//                ID = input.nextInt();
+//                for (int i=0 ; i<Person.UserLength ; i++) {
+//                    if (Person.Users[i] instanceof Student) {
+//                        if (Person.Users[i].getEducationalID() == ID){
+//                            index = i ;
+//                            break;
+//                        }
+//                    }
+//                }
+//                if (index == -1) System.out.println("student ID not found, please search again");
+//                else break;
+//            }
+//        }
+//        else {
+//            System.out.println("Enter your educational ID");
+//
+//            while (true) {
+//                ID = input.nextInt();
+//                for (int i=0 ; i<Person.UserLength ; i++) {
+//                    if (!(Person.Users[i] instanceof Student)) {
+//                        if (Person.Users[i].getEducationalID() == ID){
+//                            index = i ;
+//                            break;
+//                        }
+//                    }
+//                }
+//                if (index == -1) System.out.println("educational ID not found, please search again");
+//                else break;
+//            }
+//        }
+//        System.out.println("Enter your password ID");
+//        String password ;
+//        while (true) {
+//            password = input.next();
+//            if (password.equals(Person.Users[index].getPassword())) {
+////                Person.Users[index].userPage ;
+//                break;
+//            }
+//            else System.out.println("password is wrong");
+//        }
+//    }
 }
